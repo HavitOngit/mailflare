@@ -12,12 +12,10 @@
 
 <ModeWatcher />
 <div class="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-	<div class="hidden border-r bg-muted/40 md:block">
+	<div class="hidden border-r bg-muted/10 md:block">
 		<div class="flex h-full max-h-screen flex-col gap-2">
-			<!-- Logo -->
 			<div class="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-				<a href="/" class="flex items-center gap-2 font-semibold">
-					<Package2Icon class="h-6 w-6" />
+				<a href="/" class="flex items-center justify-center gap-2 text-xl font-bold">
 					<span>MailFlare</span>
 				</a>
 			</div>
@@ -28,7 +26,7 @@
 	</div>
 	<div class="flex flex-col">
 		<header
-			class="flex h-14 items-center justify-between gap-4 border-b bg-muted/40 px-4 md:justify-end lg:h-[60px] lg:px-6"
+			class="flex h-14 items-center justify-between gap-4 border-b bg-muted/10 px-4 md:justify-end lg:h-[60px] lg:px-6"
 		>
 			<Sheet.Root>
 				<Sheet.Trigger asChild let:builder>

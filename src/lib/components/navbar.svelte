@@ -32,7 +32,7 @@
 	{#each navlinks as navLink}
 		<a
 			href={navLink.href}
-			class={cn(["flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"])}
+			class=" flex items-center gap-3 rounded-lg px-3 py-3 transition-all hover:text-primary"
 			class:bg-muted={$page.url.pathname.startsWith(navLink.href)}
 			class:text-muted-foreground={!$page.url.pathname.startsWith(navLink.href)}
 		>
