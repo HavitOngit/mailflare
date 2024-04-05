@@ -1,41 +1,52 @@
 <script lang="ts">
-	import type { DomainsSelect } from "@/server/db/types";
-	import { createTable, Render, Subscribe, DataBodyRow, createRender } from "svelte-headless-table";
+	import type { ApiKeySelect } from "@/server/db/types";
+	import { DataBodyRow, Render, Subscribe, createRender, createTable } from "svelte-headless-table";
 	import { readable } from "svelte/store";
 	import * as Table from "$lib/components/ui/table";
-	import DomainLink from "../table-link.svelte";
+	import TokenCell from "./token-cell.svelte";
 	import TableLink from "../table-link.svelte";
 
-	export let data: DomainsSelect[];
+	export let data: ApiKeySelect[];
 
 	const table = createTable(readable(data));
 
-	/**
-	 * TODO:
-	 * 1. Add a column for the status of the domain
-	 * 2. Fetch the favicon of the domain and display it in the table
-	 */
 	const columns = table.createColumns([
 		table.column({
-			accessor: "domainUrl",
-			header: "Domain",
+			accessor: "name",
+			header: "Name",
 			cell: ({ row }) => {
 				if (!(row instanceof DataBodyRow)) {
 					return "";
 				}
 				return createRender(TableLink, {
-					text: row.original.domainUrl,
-					href: "/domains/" + row.original.id
+					text: row.original.name,
+					href: "/api-keys/" + row.original.id
 				});
 			}
 		}),
 		table.column({
-			accessor: "createdAt",
-			header: "Created At"
+			accessor: "id",
+			header: "ID"
 		}),
 		table.column({
-			accessor: "id",
-			header: "ID (Status in future)"
+			accessor: "token",
+			header: "Token",
+			cell: ({ row }) => {
+				if (!(row instanceof DataBodyRow)) {
+					return "";
+				}
+				return createRender(TokenCell, {
+					token: row.original.token
+				});
+			}
+		}),
+		table.column({
+			accessor: "permission",
+			header: "Permission"
+		}),
+		table.column({
+			accessor: "createdAt",
+			header: "Created At"
 		})
 	]);
 

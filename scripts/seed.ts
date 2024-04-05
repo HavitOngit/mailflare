@@ -1,8 +1,8 @@
-import { Scrypt } from "lucia";
-import { domainsTable, userTable } from "../src/lib/server/db/schema";
-import type { DomainsInsert } from "../src/lib/server/db/types";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
+import { Scrypt } from "lucia";
+import { apiKeysTable, domainsTable, userTable } from "../src/lib/server/db/schema";
+import type { ApiKeyInsert, DomainsInsert } from "../src/lib/server/db/types";
 
 const USERNAME = "admin";
 const PASSWORD = "mailflare";
@@ -41,10 +41,27 @@ async function seedData() {
 		.returning();
 	console.log("✨ Added user");
 
-	getDomains(admin.id).forEach(async (domain) => {
-		await db.insert(domainsTable).values(domain);
-		console.log(`✨ Added domain ${domain.domainUrl}`);
-	});
+	for (const domain of getDomains(admin.id)) {
+		const [domainFromDb] = await db.insert(domainsTable).values(domain).returning();
+		const apiKeys: ApiKeyInsert[] = [
+			{
+				name: "WEB" + domainFromDb.domainUrl,
+				permission: "ALL",
+				createdBy: admin.id
+			},
+			{
+				name: "API" + domainFromDb.domainUrl,
+				permission: "DOMAIN_SPECIFIC",
+				createdBy: admin.id,
+				domainId: domainFromDb.id
+			}
+		];
+		for (const key of apiKeys) {
+			await db.insert(apiKeysTable).values(key);
+			console.log(`🔑 Added key for domain ${domainFromDb.domainUrl}`);
+		}
+		console.log(`✨ Added domain ${domainFromDb.domainUrl}`);
+	}
 }
 
 seedData();

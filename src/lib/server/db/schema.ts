@@ -52,6 +52,10 @@ export const apiKeysTable = sqliteTable("api_keys", {
 		.primaryKey()
 		.$defaultFn(() => "key_" + generateId(15)),
 	name: text("name").notNull(),
+	token: text("token")
+		.notNull()
+		.unique()
+		.$defaultFn(() => "tok_" + generateId(30)),
 	permission: text("permission", { enum: ["ALL", "DOMAIN_SPECIFIC"] }).notNull(),
 	domainId: text("domain_id").references(() => domainsTable.id),
 	createdBy: text("created_by")

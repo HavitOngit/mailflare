@@ -9,9 +9,11 @@
 	import Navbar from "@/components/navbar.svelte";
 	import ThemeToggle from "@/components/theme-toggle.svelte";
 	import { page } from "$app/stores";
+	import { Toaster } from "@/components/ui/sonner";
 </script>
 
 <ModeWatcher />
+<Toaster />
 {#if $page.url.pathname !== "/login"}
 	<div class="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
 		<div class="hidden border-r bg-muted/10 md:block">

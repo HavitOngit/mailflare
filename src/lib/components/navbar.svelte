@@ -22,7 +22,6 @@
 		{ label: "Overview", href: "/overview", icon: HomeIcon },
 		{ label: "Emails", href: "/emails", icon: MailIcon },
 		{ label: "Domains", href: "/domains", icon: GlobeIcon },
-		{ label: "Logs", href: "/logs", icon: StretchHorizontalIcon },
 		{ label: "API Keys", href: "/api-keys", icon: LockKeyholeIcon },
 		{ label: "Settings", href: "/settings", icon: SettingsIcon }
 	];
