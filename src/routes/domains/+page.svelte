@@ -11,7 +11,7 @@
 
 <div class="container space-y-5">
 	<div class="flex items-center justify-between">
-		<h1 class="text-lg font-semibold md:text-2xl">Inventory</h1>
+		<h1 class="text-lg font-semibold md:text-2xl">Domains</h1>
 		{#if data.domains.length > 0}
 			<CreateDomain form={data.form} />
 		{/if}
@@ -19,7 +19,7 @@
 
 	{#if data.domains.length === 0}
 		<EmptyState title="No domains found" description="Add domain to start sending emails.">
-			<CreateDomain form={data.form} />
+			<CreateDomain form={data.form} class="mt-4" />
 		</EmptyState>
 	{:else}
 		<DataTable data={data.domains} />

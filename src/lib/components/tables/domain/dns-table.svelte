@@ -1,59 +1,50 @@
 <script lang="ts">
-	import type { ApiKeySelect } from "@/server/db/types";
+	import type { DNSHeader } from "@/dns-headers";
 	import { DataBodyRow, Render, Subscribe, createRender, createTable } from "svelte-headless-table";
 	import { readable } from "svelte/store";
 	import * as Table from "$lib/components/ui/table";
-	import TokenCell from "./token-cell.svelte";
-	import TableLink from "../table-link.svelte";
-	import { formateDate } from "@/index";
+	import CopyCell from "./copy-cell.svelte";
+	import type { DomainsSelect } from "@/server/db/types";
+	import StatusBadge from "../status-badge.svelte";
+	import { dnsTableData } from "./dns-store";
 
-	export let data: ApiKeySelect[];
-
-	const table = createTable(readable(data));
+	const table = createTable(dnsTableData);
 
 	const columns = table.createColumns([
 		table.column({
+			accessor: "type",
+			header: "Type"
+		}),
+		table.column({
 			accessor: "name",
 			header: "Name",
-			cell: ({ row }) => {
-				if (!(row instanceof DataBodyRow)) {
-					return "";
-				}
-				return createRender(TableLink, {
-					text: row.original.name,
-					href: "/api-keys/" + row.original.id
-				});
-			}
-		}),
-		table.column({
-			accessor: "id",
-			header: "ID"
-		}),
-		table.column({
-			accessor: "token",
-			header: "Token",
-			cell: ({ row }) => {
-				if (!(row instanceof DataBodyRow)) {
-					return "";
-				}
-				return createRender(TokenCell, {
-					token: row.original.token
-				});
-			}
-		}),
-		table.column({
-			accessor: "permission",
-			header: "Permission"
-		}),
-		table.column({
-			accessor: "createdAt",
-			header: "Created At",
 			cell: ({ value }) => {
-				return formateDate(value);
+				return createRender(CopyCell, { text: value });
+			}
+		}),
+		table.column({
+			accessor: "value",
+			header: "Value",
+			cell: ({ value }) => {
+				return createRender(CopyCell, { text: value });
+			}
+		}),
+		table.column({
+			accessor: "ttl",
+			header: "TTL"
+		}),
+		table.column({
+			accessor: "required",
+			header: "Required"
+		}),
+		table.column({
+			accessor: "status",
+			header: "Status",
+			cell: ({ value }) => {
+				return createRender(StatusBadge, { status: value });
 			}
 		})
 	]);
-
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
 </script>
 

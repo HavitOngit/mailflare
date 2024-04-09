@@ -1,10 +1,10 @@
+import { createDomainSchema } from "@/schema/domains";
 import { db } from "@/server/db";
-import type { Actions, PageServerLoad } from "./$types";
-import { fail, redirect, error } from "@sveltejs/kit";
+import { domainsTable } from "@/server/db/schema";
+import { error, fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { createDomainSchema } from "@/schema/domains";
-import { domainsTable } from "@/server/db/schema";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load = (async (event) => {
 	const user = event.locals.user;
@@ -34,26 +34,21 @@ export const actions: Actions = {
 			});
 		}
 
-		// TODO: Verify domain is valid or not
-		let domain;
+		let id;
 		try {
-			// prepend http:// to the domain to get the hostname
-			domain = new URL("http://" + form.data.domainUrl).hostname;
+			const [domain] = await db
+				.insert(domainsTable)
+				.values({
+					domainUrl: form.data.domainUrl,
+					createdBy: user.id
+				})
+				.returning();
+			id = domain.id;
 		} catch (err) {
-			console.log(err);
-			error(400, {
-				message: "Invalid domain. " + form.data.domainUrl
+			return error(400, {
+				message: (err as Error).message
 			});
 		}
-
-		const [{ id }] = await db
-			.insert(domainsTable)
-			.values({
-				domainUrl: domain,
-				createdBy: user.id
-			})
-			.returning();
-
 		redirect(302, `/domains/${id}`);
 	}
 };

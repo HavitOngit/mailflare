@@ -51,9 +51,8 @@ async function seedData() {
 			},
 			{
 				name: "API" + domainFromDb.domainUrl,
-				permission: "DOMAIN_SPECIFIC",
-				createdBy: admin.id,
-				domainId: domainFromDb.id
+				permission: "SENDING_ACCESS",
+				createdBy: admin.id
 			}
 		];
 		for (const key of apiKeys) {

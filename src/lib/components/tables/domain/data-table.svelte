@@ -1,10 +1,11 @@
 <script lang="ts">
-	import type { DomainsSelect } from "@/server/db/types";
-	import { createTable, Render, Subscribe, DataBodyRow, createRender } from "svelte-headless-table";
-	import { readable } from "svelte/store";
 	import * as Table from "$lib/components/ui/table";
-	import DomainLink from "../table-link.svelte";
-	import TableLink from "../table-link.svelte";
+	import type { DomainsSelect } from "@/server/db/types";
+	import { DataBodyRow, Render, Subscribe, createRender, createTable } from "svelte-headless-table";
+	import { readable } from "svelte/store";
+	import DomainCell from "./domain-cell.svelte";
+	import { formateDate } from "@/index";
+	import StatusBadge from "../status-badge.svelte";
 
 	export let data: DomainsSelect[];
 
@@ -23,7 +24,7 @@
 				if (!(row instanceof DataBodyRow)) {
 					return "";
 				}
-				return createRender(TableLink, {
+				return createRender(DomainCell, {
 					text: row.original.domainUrl,
 					href: "/domains/" + row.original.id
 				});
@@ -31,11 +32,24 @@
 		}),
 		table.column({
 			accessor: "createdAt",
-			header: "Created At"
+			header: "Created At",
+			cell: ({ value }) => {
+				return formateDate(value);
+			}
 		}),
 		table.column({
-			accessor: "id",
-			header: "ID (Status in future)"
+			accessor: "status",
+			header: "Status",
+			cell: ({ value }) => {
+				let status: DomainsSelect["status"]["spf"] = "Verified";
+				Object.values(value).forEach((val) => {
+					if (val === "Pending") {
+						status = "Pending";
+					}
+				});
+
+				return createRender(StatusBadge, { status });
+			}
 		})
 	]);
 

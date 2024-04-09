@@ -18,7 +18,6 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await superValidate(event, zod(loginSchema));
 
-		console.log("form", form);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -35,7 +34,6 @@ export const actions: Actions = {
 			...sessionCookie.attributes
 		});
 
-		console.log("sessionCookie", sessionCookie);
 		throw redirect(302, "/");
 		return { form };
 	}

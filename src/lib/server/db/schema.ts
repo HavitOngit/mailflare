@@ -1,3 +1,4 @@
+import type { DNSHeader } from "@/dns-headers";
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateId } from "lucia";
@@ -30,6 +31,16 @@ export const domainsTable = sqliteTable("domains", {
 		.primaryKey()
 		.$defaultFn(() => "dmn_" + generateId(15)),
 	domainUrl: text("domain").notNull().unique(),
+	status: text("status", { mode: "json" })
+		.$type<Record<DNSHeader["id"], "Verified" | "Pending">>()
+		.$defaultFn(() => ({
+			spf: "Pending",
+			"domain-lockdown": "Pending",
+			dkim: "Pending",
+			dmarc: "Pending"
+		}))
+		.notNull(),
+	publicKey: text("public_key"),
 	createdBy: text("created_by")
 		.notNull()
 		.references(() => userTable.id),
@@ -38,12 +49,11 @@ export const domainsTable = sqliteTable("domains", {
 		.notNull()
 });
 
-export const domainRelations = relations(domainsTable, ({ one, many }) => ({
+export const domainRelations = relations(domainsTable, ({ one }) => ({
 	user: one(userTable, {
 		fields: [domainsTable.createdBy],
 		references: [userTable.id]
-	}),
-	apiKeys: many(apiKeysTable)
+	})
 }));
 
 export const apiKeysTable = sqliteTable("api_keys", {
@@ -56,8 +66,7 @@ export const apiKeysTable = sqliteTable("api_keys", {
 		.notNull()
 		.unique()
 		.$defaultFn(() => "tok_" + generateId(30)),
-	permission: text("permission", { enum: ["ALL", "DOMAIN_SPECIFIC"] }).notNull(),
-	domainId: text("domain_id").references(() => domainsTable.id),
+	permission: text("permission", { enum: ["ALL", "SENDING_ACCESS"] }).notNull(),
 	createdBy: text("created_by")
 		.notNull()
 		.references(() => userTable.id),
@@ -67,10 +76,6 @@ export const apiKeysTable = sqliteTable("api_keys", {
 });
 
 export const apiKeyRelations = relations(apiKeysTable, ({ one }) => ({
-	domain: one(domainsTable, {
-		fields: [apiKeysTable.domainId],
-		references: [domainsTable.id]
-	}),
 	user: one(userTable, {
 		fields: [apiKeysTable.createdBy],
 		references: [userTable.id]
