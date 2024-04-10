@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { invalidate } from "$app/navigation";
 	import * as Alert from "$lib/components/ui/alert";
 	import { HEADERS } from "$lib/dns-headers";
+	import { dnsTableData } from "@/components/tables/domain/dns-store";
 	import DnsTable from "@/components/tables/domain/dns-table.svelte";
 	import { Badge } from "@/components/ui/badge";
 	import { Button } from "@/components/ui/button";
@@ -10,9 +12,6 @@
 	import { superForm } from "sveltekit-superforms";
 	import { zodClient } from "sveltekit-superforms/adapters";
 	import type { PageData } from "./$types";
-	import { invalidate } from "$app/navigation";
-	import { onMount } from "svelte";
-	import { dnsTableData } from "@/components/tables/domain/dns-store";
 
 	export let data: PageData;
 	let loading = false;
