@@ -43,11 +43,14 @@
 		}),
 		table.column({
 			accessor: "permission",
-			header: "Permission"
+			header: "Permission",
+			cell: ({ value }) => {
+				return value === "ALL" ? "All Domains" : "Domain Specific";
+			}
 		}),
 		table.column({
 			accessor: "createdAt",
-			header: "Created At",
+			header: "Created",
 			cell: ({ value }) => {
 				return formateDate(value);
 			}
@@ -81,13 +84,9 @@
 						{#each row.cells as cell (cell.id)}
 							<Subscribe attrs={cell.attrs()} let:attrs>
 								<Table.Cell {...attrs}>
-									{#if cell.id === "domainUrl"}
-										<div class="py-2">
-											<Render of={cell.render()} />
-										</div>
-									{:else}
+									<div class="py-2">
 										<Render of={cell.render()} />
-									{/if}
+									</div>
 								</Table.Cell>
 							</Subscribe>
 						{/each}

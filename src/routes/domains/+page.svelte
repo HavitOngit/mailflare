@@ -9,7 +9,7 @@
 	export let data: PageData;
 </script>
 
-<div class="container space-y-5">
+<div class="container max-w-6xl space-y-5">
 	<div class="flex items-center justify-between">
 		<h1 class="text-lg font-semibold md:text-2xl">Domains</h1>
 		{#if data.domains.length > 0}

@@ -2,12 +2,14 @@
 	import { invalidate } from "$app/navigation";
 	import * as Alert from "$lib/components/ui/alert";
 	import { HEADERS } from "$lib/dns-headers";
+	import KeyValue from "@/components/key-value.svelte";
 	import { dnsTableData } from "@/components/tables/domain/dns-store";
 	import DnsTable from "@/components/tables/domain/dns-table.svelte";
-	import { Badge } from "@/components/ui/badge";
+	import StatusBadge from "@/components/tables/status-badge.svelte";
 	import { Button } from "@/components/ui/button";
 	import { formateDate } from "@/index";
 	import { verifyDnsSchema } from "@/schema/domains";
+	import { isDomainVerified } from "@/verify-dns";
 	import { AlertCircleIcon } from "lucide-svelte";
 	import { superForm } from "sveltekit-superforms";
 	import { zodClient } from "sveltekit-superforms/adapters";
@@ -33,9 +35,10 @@
 			HEADERS.map((header) => ({ ...header, status: data.domain.status[header.id] }))
 		);
 	}
+	let status = isDomainVerified(data.domain.status);
 </script>
 
-<div class="container space-y-5">
+<div class="container max-w-6xl space-y-5">
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
 			<span class="text-sm text-muted-foreground">Domain</span>
@@ -51,19 +54,13 @@
 			</form>
 		</div>
 	</div>
-	<div class="flex flex-wrap gap-3 md:gap-16">
-		<div>
-			<span class="text-xs uppercase text-muted-foreground">Created</span>
-			<p class="text-sm">
-				{formateDate(data.domain.createdAt)}
-			</p>
-		</div>
-		<div>
-			<span class="text-xs uppercase text-muted-foreground">Status</span>
-			<p>
-				<Badge class="text-xs" variant="secondary">{data.domain.id}</Badge>
-			</p>
-		</div>
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-7 lg:grid-cols-4">
+		<KeyValue key="Created">
+			{formateDate(data.domain.createdAt)}
+		</KeyValue>
+		<KeyValue key="Status">
+			<StatusBadge {status} />
+		</KeyValue>
 	</div>
 
 	<div class="rounded-lg border-2 border-dotted p-5">

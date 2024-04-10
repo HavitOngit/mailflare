@@ -6,16 +6,12 @@
 	import DomainCell from "./domain-cell.svelte";
 	import { formateDate } from "@/index";
 	import StatusBadge from "../status-badge.svelte";
+	import { isDomainVerified } from "@/verify-dns";
 
 	export let data: DomainsSelect[];
 
 	const table = createTable(readable(data));
 
-	/**
-	 * TODO:
-	 * 1. Add a column for the status of the domain
-	 * 2. Fetch the favicon of the domain and display it in the table
-	 */
 	const columns = table.createColumns([
 		table.column({
 			accessor: "domainUrl",
@@ -41,12 +37,7 @@
 			accessor: "status",
 			header: "Status",
 			cell: ({ value }) => {
-				let status: DomainsSelect["status"]["spf"] = "Verified";
-				Object.values(value).forEach((val) => {
-					if (val === "Pending") {
-						status = "Pending";
-					}
-				});
+				const status = isDomainVerified(value);
 
 				return createRender(StatusBadge, { status });
 			}
@@ -80,13 +71,9 @@
 						{#each row.cells as cell (cell.id)}
 							<Subscribe attrs={cell.attrs()} let:attrs>
 								<Table.Cell {...attrs}>
-									{#if cell.id === "domainUrl"}
-										<div class="py-2">
-											<Render of={cell.render()} />
-										</div>
-									{:else}
+									<div class="py-2">
 										<Render of={cell.render()} />
-									{/if}
+									</div>
 								</Table.Cell>
 							</Subscribe>
 						{/each}

@@ -89,6 +89,13 @@ async function fetchDns(domain: string, type: string) {
 	return res.json();
 }
 
+export function isDomainVerified(status: DomainsSelect["status"]): "Verified" | "Pending" {
+	if (status.spf === "Verified" && status["domain-lockdown"] === "Verified") {
+		return "Verified";
+	}
+	return "Pending";
+}
+
 interface DNSResponse {
 	Status: number;
 	TC: boolean;
