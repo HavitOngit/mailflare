@@ -49,11 +49,12 @@ export const domainsTable = sqliteTable("domains", {
 		.notNull()
 });
 
-export const domainRelations = relations(domainsTable, ({ one }) => ({
+export const domainRelations = relations(domainsTable, ({ one, many }) => ({
 	user: one(userTable, {
 		fields: [domainsTable.createdBy],
 		references: [userTable.id]
-	})
+	}),
+	apiKeys: many(apiKeysTable)
 }));
 
 export const apiKeysTable = sqliteTable("api_keys", {
@@ -66,7 +67,8 @@ export const apiKeysTable = sqliteTable("api_keys", {
 		.notNull()
 		.unique()
 		.$defaultFn(() => "tok_" + generateId(30)),
-	permission: text("permission", { enum: ["ALL", "SENDING_ACCESS"] }).notNull(),
+	permission: text("permission", { enum: ["ALL", "DOMAIN_SPECIFIC"] }).notNull(),
+	domainId: text("domain_id").references(() => domainsTable.id),
 	createdBy: text("created_by")
 		.notNull()
 		.references(() => userTable.id),
@@ -76,6 +78,10 @@ export const apiKeysTable = sqliteTable("api_keys", {
 });
 
 export const apiKeyRelations = relations(apiKeysTable, ({ one }) => ({
+	domain: one(domainsTable, {
+		fields: [apiKeysTable.domainId],
+		references: [domainsTable.id]
+	}),
 	user: one(userTable, {
 		fields: [apiKeysTable.createdBy],
 		references: [userTable.id]

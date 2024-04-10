@@ -32,7 +32,7 @@
 		<Dialog.Header>
 			<Dialog.Title>Add domain</Dialog.Title>
 			<Dialog.Description>
-				Make changes to your profile here. Click save when you're done.
+				After adding the domain. You need to verify the domain
 			</Dialog.Description>
 		</Dialog.Header>
 		<form method="POST" action="?/create-domain" use:enhance>
